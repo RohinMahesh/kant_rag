@@ -1,53 +1,52 @@
 from typing import Dict, List
 
-from dataprep.hfembeddings import HFEmbeddings
-import faiss
 import numpy as np
 import pandas as pd
-import torch
-from utils.constants import HIDDEN_SIZE
+from langchain.vectorstores import FAISS
+from langchain.schema import Document
+from langchain.embeddings import HuggingFaceEmbeddings
+from utils.constants import (
+    EMBEDDINGS_NAME,
+    EMBEDDINGS_KWARGS,
+    ENCODE_KWARGS,
+)
 from utils.file_paths import INDEX_PATH
 
 
-def create_index(feature_space: np.ndarray):
+def load_embeddings():
     """
-    Creates FAISS index
+    Loads HuggingFace Embeddings from LangChain
 
-    :param feature_space: numpy array containing text for feature extraction
+    :returns embeddings: HuggingFace embeddings
     """
-    # Build the index using hidden size of upstream tokenizer
-    index = faiss.IndexFlatL2(feature_space.shape[1])
-
-    # Add vectors to index
-    index.add(feature_space)
-
-    # Save index
-    faiss.write_index(index, INDEX_PATH)
+    embeddings = HuggingFaceEmbeddings(
+        model_name=EMBEDDINGS_NAME,
+        model_kwargs=EMBEDDINGS_KWARGS,
+        encode_kwargs=ENCODE_KWARGS,
+    )
+    return embeddings
 
 
-def search_index(
-    input_data: List[str],
-    index_file: faiss.IndexFlatL2,
-    k: int = 1,
-    hidden_size: int = HIDDEN_SIZE,
-):
+def create_save_faiss_db(text: List[str], metadata: List[str]):
     """
-    Searches FAISS index
+    Creates and saves FAISS index
 
-    :param input_data: list containing text for feature extraction
-    :param index_file: FAISS index file
-    :param k: optional number of similar vectors for search,
-        defaults to 1
-    :param hidden_size: optional hidden size for tokenizer,
-        defaults to HIDDEN_SIZE
+    :param text: text to be encoded and stored in FAISS
+    :param metadata: source material for given text
     """
-    # Get embeddings
-    embedding = HFEmbeddings(data=input_data).create_embeddings()
+    # Load embeddings
+    embeddings = load_embeddings()
 
-    # Reshape input to match hidden state of upstream tokenizer
-    embedding = embedding.reshape(1, hidden_size)
+    # Prepare metadata
+    metadata = [{"Source": x} for x in metadata]
 
-    # Search index
-    distances, indices = index_file.search(embedding, k=k)
+    # Prepare documents
+    documents = [
+        Document(page_content=x, metadata=dict(page=y)) for x, y in zip(text, metadata)
+    ]
 
-    return {"Indices": indices.tolist()[0], "Distances": distances.tolist()[0]}
+    # Create FAISS index
+    db = FAISS.from_documents(documents, embeddings)
+
+    # Save FAISS index
+    db.save_local(INDEX_PATH)
