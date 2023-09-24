@@ -1,4 +1,4 @@
-# Philosophy Retrieval Augmented Generation (RAG)
+# Philosophy Retrieval Augmented Generation
 
 The documents used for this QA bot is based on works from The Groundwork to the Metaphysics of Morals by Immanuel Kant to create our knowledge base. We then perform Retrieval Augmented Generation, which leverages our knowledge base to better answer a given question.
 
