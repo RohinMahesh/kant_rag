@@ -1,5 +1,7 @@
 import streamlit as st
-from philosophy_qa_bot.modeling.rag_model import PhilosophyRAG
+from retrieval_augmented_generation_with_langchain.modeling.rag_model import (
+    PhilosophyRAG,
+)
 
 st.title("Philosophy QA Bot")
 

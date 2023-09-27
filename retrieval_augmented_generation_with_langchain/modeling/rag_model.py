@@ -5,7 +5,7 @@ from langchain.chains import RetrievalQA
 from langchain.llms import OpenAI
 from langchain.vectorstores import FAISS
 
-from philosophy_qa_bot.utils.constants import (
+from retrieval_augmented_generation_with_langchain.utils.constants import (
     CHAIN_TYPE,
     K_VECTORS,
     OPENAI_KEY,
@@ -15,8 +15,8 @@ from philosophy_qa_bot.utils.constants import (
     TEMPLATE,
 )
 
-from philosophy_qa_bot.utils.file_paths import INDEX_PATH
-from philosophy_qa_bot.utils.helpers import load_embeddings
+from retrieval_augmented_generation_with_langchain.utils.file_paths import INDEX_PATH
+from retrieval_augmented_generation_with_langchain.utils.helpers import load_embeddings
 
 
 @dataclass
