@@ -6,6 +6,7 @@ OPENAI_KEY = "..."
 OPENAI_MODEL = "text-davinci-003"
 PROMPT_INPUT_VARIABLES = ["context", "question"]
 TEMPERATURE = 0.6
+CHAIN_TYPE = "stuff"
 TEMPLATE = """
     Don't try to make up an answer, if you don't know just say that you don't know.
     Answer in the same language the question was asked.

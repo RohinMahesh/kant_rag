@@ -35,14 +35,14 @@ class PhilosophyRAG:
     temperate: float = TEMPERATURE
     number_similar_vectors: int = K_VECTORS
 
-    def process_output(self, text: str):
+    def _process_output(self, text: str):
         """
         Formats response from OpenAI
 
         :param text: response from OpenAI
         :returns dictionary containing response and sources
         """
-        response = text["result"]
+        response = text["result"].strip()
         source_documents = [x for x in text["metadata"]["page"]["Source"]]
         return {"Response": response, "Source": source_documents}
 
@@ -90,7 +90,7 @@ class PhilosophyRAG:
         text = self.qa_chain(self.question)
 
         # Process response
-        formatted_response = self.process_output(text)
+        formatted_response = self._process_output(text)
 
         # Get response from OpenAI
         return formatted_response
