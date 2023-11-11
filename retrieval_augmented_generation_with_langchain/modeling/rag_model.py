@@ -43,7 +43,9 @@ class PhilosophyRAG:
         :returns dictionary containing response and sources
         """
         response = text["result"].strip()
-        source_documents = [x for x in text["metadata"]["page"]["Source"]]
+        source_documents = [
+            x.metadata["page"]["Source"] for x in text["source_documents"]
+        ]
         return {"Response": response, "Source": source_documents}
 
     def run(self):
