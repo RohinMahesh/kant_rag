@@ -1,15 +1,14 @@
 from dataclasses import dataclass
 
-import openai
 import giskard
-
-from retrieval_augmented_generation_with_langchain.utils.constants import (
-    DEFAULT_SCAN,
-    DEFAULT_QUESTION,
-    OPENAI_KEY,
-)
+import openai
 from retrieval_augmented_generation_with_langchain.modeling.rag_model import (
     PhilosophyRAG,
+)
+from retrieval_augmented_generation_with_langchain.utils.constants import (
+    DEFAULT_QUESTION,
+    DEFAULT_SCAN,
+    OPENAI_KEY,
 )
 
 
