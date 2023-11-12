@@ -4,7 +4,7 @@
 
 # Motivation
 
-Historically, one of the more challenging use cases in the Information Retrieval (IR) domain has been around building solutions to support question answering. As organizations strive to become digital-first and undergo respective digital transformations, it is imperative to enable services within products to intelligently provide quick and accurate answers to their customers questions. This is crucial in providing a positive customer experience at every touchpoint a customer has with the product. 
+Historically, one of the more challenging use cases in the Information Retrieval (IR) domain has been around building solutions to support question answering. As organizations strive to become digital-first and undergo respective digital transformations, it is imperative to enable services within products to intelligently provide quick and accurate answers to key product related questions. This is crucial in providing a positive customer experience at every touchpoint a customer has with the product. 
 
 In addition to having an ample amount of high-quality labeled data, a key challenge in this area has been around efficient document retrieval methods to generate domain-specific context for downstream language models. Because of this, historically, leading models alone are insufficient to answer several domain-specific questions accurately and reliably. Modern day Large Language Models (LLMs) will require some sort of fine-tuning (i.e., PEFT, LoRA) to provide domain-specific answers.
 
