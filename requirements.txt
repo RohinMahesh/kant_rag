@@ -8,3 +8,4 @@ sentence-transformers==2.2.2
 streamlit==1.27.0
 tiktoken==0.5.1
 transformers==4.33.2
+giskard==2.0.2
