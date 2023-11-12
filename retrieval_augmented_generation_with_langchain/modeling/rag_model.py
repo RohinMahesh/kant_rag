@@ -29,11 +29,13 @@ class PhilosophyRAG:
         defaults to TEMPERATURE
     :param number_similar_embedding: number of similar embeddings to search via FAISS,
         defaults to K_VECTORS
+    :param debug: boolean value to return RAG model for testing
     """
 
     question: str
     temperate: float = TEMPERATURE
     number_similar_vectors: int = K_VECTORS
+    debug: bool = False
 
     def _process_output(self, text: str):
         """
@@ -87,6 +89,9 @@ class PhilosophyRAG:
             return_source_documents=True,
             verbose=False,
         )
+
+        if self.debug:
+            return self.qa_chain
 
         # Get response from OpenAI
         text = self.qa_chain(self.question)
