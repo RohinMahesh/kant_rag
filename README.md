@@ -8,7 +8,7 @@ Historically, one of the more challenging use cases in the Information Retrieval
 
 In addition to having an ample amount of high-quality labeled data, a key challenge in this area has been around efficient document retrieval methods to generate domain-specific context for downstream language models. Because of this, historically, leading models alone are insufficient to answer several domain-specific questions accurately and reliably. Modern day Large Language Models (LLMs) will require some sort of fine-tuning (i.e., PEFT, LoRA) to provide domain-specific answers.
 
-The specific task we focus on in this repository is a request I have received from several of my former customers - creating a question answering solution to use existing information around the service's offerings to answer a questions question.
+The specific task we focus on in this repository is a request I have received from several of my former customers - creating a question answering solution that uses existing information around the service's offerings to answer a questions question.
 
 # Background
 
@@ -27,4 +27,11 @@ The QA bot was created through the following process:
 - Execution of RetrievalQA to serve response for a given question
 
 This is run as a Streamlit application, which can be found in applications/app.py. For reproducibility, the underlying FAISS index for RAG is made available under data/faiss_index. 
+
+In order to promote Resonsible AI standards, Giskard is used to scan for the following:
+- Injection attacks
+- Hallucination and misinformation
+- Harmful content generation
+- Stereotypes
+- Information disclosure
 

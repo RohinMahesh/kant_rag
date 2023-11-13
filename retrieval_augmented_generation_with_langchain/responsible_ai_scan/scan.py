@@ -15,7 +15,7 @@ from retrieval_augmented_generation_with_langchain.utils.constants import (
 @dataclass
 class ScanRAGModel:
     """
-    Performs scans for various risks in RAG model, including:
+    Performs scans for various risks in RAG model to promote Responsible AI, including:
         - Injection attacks
         - Hallucination and misinformation
         - Harmful content generation
