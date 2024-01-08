@@ -5,8 +5,9 @@ from langchain.chains import RetrievalQA
 from langchain.llms import OpenAI
 from langchain.vectorstores import FAISS
 
-from retrieval_augmented_generation_with_langchain.utils.constants import (
+from kant_rag.utils.constants import (
     CHAIN_TYPE,
+    DEFAULT_QUESTION,
     K_VECTORS,
     OPENAI_KEY,
     OPENAI_MODEL,
@@ -14,17 +15,17 @@ from retrieval_augmented_generation_with_langchain.utils.constants import (
     TEMPERATURE,
     TEMPLATE,
 )
-
-from retrieval_augmented_generation_with_langchain.utils.file_paths import INDEX_PATH
-from retrieval_augmented_generation_with_langchain.utils.helpers import load_embeddings
+from kant_rag.utils.file_paths import INDEX_PATH
+from kant_rag.utils.helpers import load_embeddings
 
 
 @dataclass
-class PhilosophyRAG:
+class KantRAG:
     """
-    Performs Retrieval Augmented Generation with Open AI and LangChain
+    Creates RetrievalQA chain for QA using LangChain and OpenAI
 
-    :param question: question to answer
+    :param question: question to answer,
+        defaults to DEFAULT_QUESTION
     :param temperature: temperature for Open AI model,
         defaults to TEMPERATURE
     :param number_similar_embedding: number of similar embeddings to search via FAISS,
@@ -32,7 +33,7 @@ class PhilosophyRAG:
     :param debug: boolean value to return RAG model for testing
     """
 
-    question: str
+    question: str = DEFAULT_QUESTION
     temperate: float = TEMPERATURE
     number_similar_vectors: int = K_VECTORS
     debug: bool = False
@@ -50,11 +51,11 @@ class PhilosophyRAG:
         ]
         return {"Response": response, "Source": source_documents}
 
-    def run(self):
+    def _create_chain(self):
         """
-        Constructs context and prompt to answer given question
+        Creates LangChain RetrievalQA object
 
-        :returns response from OpenAI given constructed prompt
+        :returns None
         """
         # Load embeddings
         embeddings = load_embeddings()
@@ -89,6 +90,15 @@ class PhilosophyRAG:
             return_source_documents=True,
             verbose=False,
         )
+
+    def run(self):
+        """
+        Constructs context and prompt to answer given question
+
+        :returns response from OpenAI given constructed prompt
+        """
+        # Create RetrievalQA chain
+        self._create_chain()
 
         if self.debug:
             return self.qa_chain

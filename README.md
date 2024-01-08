@@ -1,6 +1,6 @@
-# Retrieval Augmented Generation with LangChain
+# Kant Retrieval Augmented Generation
 
-![Screenshot](retrieval_augmented_generation_with_langchain/docs/images/langchain_banner.png)
+![Screenshot](kant_rag/docs/images/langchain_banner.png)
 
 # Motivation
 
@@ -16,6 +16,8 @@ The documents used for the project is based on works from The Groundwork to the 
 
 In generating a knowledge base, the challenge in this domain is that common themes can have conflicting viewpoints based on the branch of philosophy. For example, a prompt for "What is justice?" can have varying answers based on the school of thought (Stoic, Socratic, etc.). In an attempt to reduce potential hallucinations, only the aforementioned documents will be used to create a knowledge base for our downstream question and answering. 
 
+# Approach
+
 A key consideration in generating this knowledge base would be semantic chunking. There are several strategies for chunking, such as fixed-size chunking, content-aware chunking, and recursive chunking. In this implementation, I utilized content-aware chunking via naïve splitting of paragraphs into documents for downstream consumption.
 
 The QA bot was created through the following process: 
@@ -28,6 +30,22 @@ The QA bot was created through the following process:
 
 This is run as a Streamlit application, which can be found in applications/app.py. For reproducibility, the underlying FAISS index for RAG is made available under data/faiss_index. 
 
+# Evaluation
+
+To evaluate our RAG, Ragas is used to evaluate both the generation and the retrieval of our RAG. 
+- Context relevancy
+- Context recall
+- Answer relevancy
+- Faithfulness
+
+These 4 metrics together are used to calculate the "Ragas Score", which can be calculated by running the following file: 
+
+evaluation/evaluate.py
+
+It is recommended to establish Red-Amber-Green thresholds based on this score and integrate this into the LLMOps stack to trigger downstream actions, such as recreating the embeddings and index files.
+
+# Responsible AI
+
 In order to promote Resonsible AI standards, Giskard is used to scan for the following:
 - Injection attacks
 - Hallucination and misinformation
@@ -35,3 +53,10 @@ In order to promote Resonsible AI standards, Giskard is used to scan for the fol
 - Stereotypes
 - Information disclosure
 
+It is imperative that the responses from the RAG does not violate any of the Responsible AI risks above that are scanned by Giskard. To perform this scan, integrate the following file into your LLMOps stack: 
+
+responsible_ai_scan/scan.py
+
+# Disclaimers
+
+- With the current version of Ragas, it is a known issue that the environment variable for "OPENAI_API_KEY" must be set before importing ragas related libraries or you will face errors with OpenAI.

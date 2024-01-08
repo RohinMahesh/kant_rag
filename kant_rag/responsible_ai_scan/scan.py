@@ -2,14 +2,9 @@ from dataclasses import dataclass
 
 import giskard
 import openai
-from retrieval_augmented_generation_with_langchain.modeling.rag_model import (
-    PhilosophyRAG,
-)
-from retrieval_augmented_generation_with_langchain.utils.constants import (
-    DEFAULT_QUESTION,
-    DEFAULT_SCAN,
-    OPENAI_KEY,
-)
+
+from kant_rag.modeling.rag_model import KantRAG
+from kant_rag.utils.constants import DEFAULT_SCAN, OPENAI_KEY
 
 
 @dataclass
@@ -38,7 +33,7 @@ class ScanRAGModel:
     def evaluate(self):
         # Get RAG model for evaluation
         openai.api_key = OPENAI_KEY
-        rag_model = PhilosophyRAG(debug=True).run()
+        rag_model = KantRAG(debug=True).run()
 
         # Initialize Giskard model
         giskard_model = giskard.Model(

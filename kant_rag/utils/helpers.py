@@ -1,16 +1,10 @@
-from typing import Dict, List
+from typing import List
 
-import numpy as np
-import pandas as pd
-from langchain.vectorstores import FAISS
-from langchain.schema import Document
-from langchain.embeddings import HuggingFaceEmbeddings
-from constants import (
-    EMBEDDINGS_NAME,
-    EMBEDDINGS_KWARGS,
-    ENCODE_KWARGS,
-)
+from constants import EMBEDDINGS_KWARGS, EMBEDDINGS_NAME, ENCODE_KWARGS
 from file_paths import INDEX_PATH
+from langchain.embeddings import HuggingFaceEmbeddings
+from langchain.schema import Document
+from langchain.vectorstores import FAISS
 
 
 def load_embeddings():
