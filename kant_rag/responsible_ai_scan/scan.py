@@ -1,4 +1,5 @@
 from dataclasses import dataclass
+from typing import List, Union
 
 import giskard
 import openai
@@ -27,10 +28,10 @@ class ScanRAGModel:
 
     name: str
     description: str
-    scans: list = DEFAULT_SCAN
+    scans: List[str] = DEFAULT_SCAN
     interactive: bool = False
 
-    def evaluate(self):
+    def evaluate(self) -> Union[dict, giskard.Report]:
         # Get RAG model for evaluation
         openai.api_key = OPENAI_KEY
         rag_model = KantRAG(debug=True).run()

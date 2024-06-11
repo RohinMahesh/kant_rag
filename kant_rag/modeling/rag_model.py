@@ -1,4 +1,5 @@
 from dataclasses import dataclass
+from typing import Any, Dict, List, Union
 
 from langchain import PromptTemplate
 from langchain.chains import RetrievalQA
@@ -38,7 +39,7 @@ class KantRAG:
     number_similar_vectors: int = K_VECTORS
     debug: bool = False
 
-    def _process_output(self, text: str):
+    def _process_output(self, text: Dict[str, Any]) -> Dict[str, Union[str, List[str]]]:
         """
         Formats response from OpenAI
 
@@ -51,7 +52,7 @@ class KantRAG:
         ]
         return {"Response": response, "Source": source_documents}
 
-    def _create_chain(self):
+    def _create_chain(self) -> None:
         """
         Creates LangChain RetrievalQA object
 
@@ -91,7 +92,7 @@ class KantRAG:
             verbose=False,
         )
 
-    def run(self):
+    def run(self) -> Union[Dict[str, Union[str, List[str]]], RetrievalQA]:
         """
         Constructs context and prompt to answer given question
 

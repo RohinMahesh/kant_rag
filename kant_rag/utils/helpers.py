@@ -1,13 +1,14 @@
 from typing import List
 
-from constants import EMBEDDINGS_KWARGS, EMBEDDINGS_NAME, ENCODE_KWARGS
-from file_paths import INDEX_PATH
 from langchain.embeddings import HuggingFaceEmbeddings
 from langchain.schema import Document
 from langchain.vectorstores import FAISS
 
+from kant_rag.utils.constants import EMBEDDINGS_KWARGS, EMBEDDINGS_NAME, ENCODE_KWARGS
+from kant_rag.utils.file_paths import INDEX_PATH
 
-def load_embeddings():
+
+def load_embeddings() -> HuggingFaceEmbeddings:
     """
     Loads HuggingFace Embeddings from LangChain
 
@@ -21,12 +22,13 @@ def load_embeddings():
     return embeddings
 
 
-def create_save_faiss_db(text: List[str], metadata: List[str]):
+def create_save_faiss_db(text: List[str], metadata: List[str]) -> None:
     """
     Creates and saves FAISS index
 
     :param text: text to be encoded and stored in FAISS
     :param metadata: source material for given text
+    :returns None
     """
     # Load embeddings
     embeddings = load_embeddings()

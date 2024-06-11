@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from typing import List
+from typing import Any, Dict, List
 
 import numpy as np
 from langchain.chains import RetrievalQA
@@ -26,7 +26,7 @@ class EvaluateRAG:
     rag_model: RetrievalQA = KantRAG
     eval_zip: zip = EVALUATION_ZIP
 
-    def _prepare_responses(self):
+    def _prepare_responses(self) -> Dict[str, str]:
         """
         Prepares responses for evaluation
 
@@ -47,7 +47,7 @@ class EvaluateRAG:
         }
         return prepared_responses
 
-    def score_rag(self):
+    def score_rag(self) -> Dict[str, float]:
         """
         Scores RAG for generation and retrieval
 
