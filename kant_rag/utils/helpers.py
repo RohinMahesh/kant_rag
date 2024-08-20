@@ -1,11 +1,27 @@
 from typing import List
 
+import tiktoken
+from kant_rag.utils.constants import (
+    EMBEDDINGS_KWARGS,
+    EMBEDDINGS_NAME,
+    ENCODE_KWARGS,
+    TIKTOKEN_ENCODING,
+)
+from kant_rag.utils.file_paths import INDEX_PATH
 from langchain.embeddings import HuggingFaceEmbeddings
 from langchain.schema import Document
 from langchain.vectorstores import FAISS
 
-from kant_rag.utils.constants import EMBEDDINGS_KWARGS, EMBEDDINGS_NAME, ENCODE_KWARGS
-from kant_rag.utils.file_paths import INDEX_PATH
+
+def count_tokens(text: str) -> int:
+    """
+    Estimates the number of tokens in a given text via tiktoken
+
+    :param text: the text for analysis
+    :returns the estimated number of tokens in the text
+    """
+    enc = tiktoken.get_encoding(TIKTOKEN_ENCODING)
+    return len(enc.encode(text))
 
 
 def load_embeddings() -> HuggingFaceEmbeddings:
