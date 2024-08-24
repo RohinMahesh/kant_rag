@@ -1,25 +1,11 @@
-import os
-import sys
-
-repo_path = os.path.abspath("/Users/rohinmahesh/Documents/GitHub/kant_rag")
-
-if repo_path not in sys.path:
-    sys.path.append(repo_path)
-
-import logging
-from pathlib import Path
-import pytest
 import shutil
 import tempfile
-from unittest.mock import patch, MagicMock
+from pathlib import Path
+from unittest.mock import MagicMock, patch
 
-from kant_rag.utils.helpers import count_tokens, load_embeddings, create_save_faiss_db
+import pytest
+from kant_rag.utils.helpers import count_tokens, create_save_faiss_db, load_embeddings
 from langchain.embeddings import HuggingFaceEmbeddings, OpenAIEmbeddings
-
-
-# Set up logging
-logging.basicConfig(level=logging.DEBUG)
-logger = logging.getLogger(__name__)
 
 
 @pytest.mark.parametrize(
@@ -62,9 +48,6 @@ def test_create_save_faiss_db(mock_faiss, mock_load_embeddings, embedding_type):
     # Create a temporary directory for the test
     temp_dir = tempfile.mkdtemp()
     temp_dir_path = Path(temp_dir)
-
-    # Log the temporary directory path
-    logger.debug(f"Temporary directory for test: {temp_dir_path}")
 
     # Mocking the embeddings method and FAISS operations
     mock_embeddings = MagicMock()

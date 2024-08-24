@@ -1,32 +1,12 @@
-# from ragas.langchain import RagasEvaluatorChain
-# from ragas.metrics import (
-#     answer_relevancy,
-#     context_recall,
-#     context_relevancy,
-#     faithfulness,
-# )
-
 OPENAI_EMBEDDINGS_NAME = "text-embedding-ada-002"
 HF_EMBEDDINGS_NAME = "distilbert-base-uncased-finetuned-sst-2-english"
 HF_EMBEDDINGS_KWARGS = {"device": "cpu"}
 HF_ENCODE_KWARGS = {"normalize_embeddings": False}
 K_VECTORS = 5
-OPENAI_KEY = "..."
+OPENAI_KEY = "abc-123"
 OPENAI_MODEL = "gpt-4o-mini-2024-07-18"
 PROMPT_INPUT_VARIABLES = ["context", "question"]
-# EVALUATION_METRICS = [
-#     "faithfulness_score",
-#     "answer_relevancy_score",
-#     "context_relevancy_score",
-#     "context_recall_score",
-# ]
-# EVALUATORS = [
-#     RagasEvaluatorChain(metric=faithfulness),
-#     RagasEvaluatorChain(metric=answer_relevancy),
-#     RagasEvaluatorChain(metric=context_relevancy),
-#     RagasEvaluatorChain(metric=context_recall),
-# ]
-# EVALUATION_ZIP = zip(EVALUATION_METRICS, EVALUATORS)
+RAGAS_MANDATORY_KEYS = ["question", "answer", "contexts", "ground_truth"]
 TEMPERATURE = 0.0
 CHAIN_TYPE = "stuff"
 TIKTOKEN_ENCODING = "cl100k_base"
