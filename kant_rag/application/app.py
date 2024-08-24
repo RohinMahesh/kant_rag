@@ -1,5 +1,4 @@
 import streamlit as st
-
 from kant_rag.modeling.rag_model import KantRAG
 
 st.title("Kant QA")

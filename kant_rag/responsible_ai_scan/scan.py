@@ -3,7 +3,6 @@ from typing import List, Union
 
 import giskard
 import openai
-
 from kant_rag.modeling.rag_model import KantRAG
 from kant_rag.utils.constants import DEFAULT_SCAN, OPENAI_KEY
 
