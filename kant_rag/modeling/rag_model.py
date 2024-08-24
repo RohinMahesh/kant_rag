@@ -1,4 +1,3 @@
-import ast
 import warnings
 from dataclasses import dataclass
 from typing import Any, Dict, List, Union
@@ -38,13 +37,19 @@ class KantRAG:
         defaults to TEMPERATURE
     :param number_similar_embedding: number of similar embeddings to search via FAISS,
         defaults to K_VECTORS
-    :param debug: boolean value to return RAG model for testing
+    :param debug: boolean value to return RAG model for testing,
+        defaults to FALSE
+    :param embedding_type: type of embeddings to use for searching and asking,
+        defaults to 'HuggingFace'
+    :param parser: PyDantic output parser for formatting output response,
+        defaults to ResponseValidator
     """
 
     question: str = DEFAULT_QUESTION
     temperature: float = TEMPERATURE
     number_similar_vectors: int = K_VECTORS
     debug: bool = False
+    embedding_type: str = "HuggingFace"
     parser: PydanticOutputParser = PydanticOutputParser(
         pydantic_object=ResponseValidator
     )
@@ -57,7 +62,6 @@ class KantRAG:
         :returns dictionary containing response and sources
         """
         response = text["result"].strip()
-        response = ast.literal_eval(response)["result"]
         source_documents = [
             x.metadata["page"]["Source"] for x in text["source_documents"]
         ]
@@ -70,7 +74,7 @@ class KantRAG:
         :returns None
         """
         # Load embeddings
-        embeddings = load_embeddings()
+        embeddings = load_embeddings(embedding_type=self.embedding_type)
 
         # Load FAISS index
         faiss_db = FAISS.load_local(INDEX_PATH, embeddings)

@@ -1,11 +1,22 @@
+import os
 from dataclasses import dataclass
-from typing import Any, Dict, List
+from typing import Dict
 
-import numpy as np
-from langchain.chains import RetrievalQA
+from datasets import Dataset
+from kant_rag.utils.constants import OPENAI_KEY, RAGAS_MANDATORY_KEYS
 
-from kant_rag.modeling.rag_model import KantRAG
-from kant_rag.utils.constants import EVALUATION_ZIP
+os.environ["OPENAI_API_KEY"] = OPENAI_KEY
+
+from ragas import evaluate
+from ragas.metrics import (
+    answer_correctness,
+    answer_relevancy,
+    context_entity_recall,
+    context_precision,
+    context_recall,
+    context_utilization,
+    faithfulness,
+)
 
 
 @dataclass
@@ -13,39 +24,29 @@ class EvaluateRAG:
     """
     Evaluates RAG using Ragas
 
-    :param queries: list of queries for evaluation
-    :param responses: responses from RAG
-    :param rag_model: LangChain RetrievalQA chain,
-        defaults to KantRAG
-    :param eval_zip: evaluation zip containing metric and RagasEvaluatorChain,
-        defaults to EVALUATION_ZIP
+    :param data: dictionary containing queries, answers, contexts, and ground truths
     """
 
-    queries: List[str]
-    responses: List[str]
-    rag_model: RetrievalQA = KantRAG
-    eval_zip: zip = EVALUATION_ZIP
+    data: Dict
 
-    def _prepare_responses(self) -> Dict[str, str]:
-        """
-        Prepares responses for evaluation
+    def __post_init__(self):
+        assert all(
+            item in self.data for item in RAGAS_MANDATORY_KEYS
+        ), "One of the following mandatory fields of 'question', 'answer', 'contexts', and 'ground_truth' is missing!"
 
-        :return prepared_responses: prepared examples andresponses from RetrievalQA chain
-        """
-        # Prepare input for batch RAG model
-        examples = [
-            {"query": q, "ground_truths": [self.responses[i]]}
-            for i, q in enumerate(self.queries)
-        ]
-
-        # Get batch responses
-        result = self.rag_model.batch(examples)
-
-        prepared_responses = {
-            "examples": examples,
-            "result": result,
-        }
-        return prepared_responses
+        object.__setattr__(
+            self,
+            "evaluators",
+            [
+                faithfulness,
+                answer_relevancy,
+                answer_correctness,
+                context_recall,
+                context_precision,
+                context_utilization,
+                context_entity_recall,
+            ],
+        )
 
     def score_rag(self) -> Dict[str, float]:
         """
@@ -53,22 +54,10 @@ class EvaluateRAG:
 
         :returns ragas_metrics: evaluation metrics for generation/retreival of RAG
         """
-        # Get RAG response
-        prepared_response = self._prepare_examples()
+        # Prepare data
+        data = Dataset.from_dict(self.data)
 
-        # Calculate metrics for batch of examples
-        ragas_metrics = dict()
-        for key, evaluator in EVALUATION_ZIP:
-            metric = [
-                evaluator.evaluate(x["examples", x["result"]])
-                for x in prepared_response
-            ]
-            if metric != list():
-                metric = np.sum([x[key] for x in metric])
-                ragas_metrics[key] = round(metric, 2)
-
-        # Calculate ragas score
-        ragas_metrics["ragas_score"] = round(
-            np.mean([np.sum(x) for x in list(ragas_metrics.values())]), 2
-        )
-        return ragas_metrics
+        # Evaluate performance
+        scores = evaluate(data, metrics=self.evaluators)
+        scores = {key: round(value, 4) for key, value in scores.items()}
+        return scores
