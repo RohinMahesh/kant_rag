@@ -1,7 +1,4 @@
-# Kant Retrieval Augmented Generation
-
-![Build Status](https://github.com/RohinMahesh/kant_rag/actions/workflows/ci.yml/badge.svg)
-
+# Kant Retrieval Augmented Generation (RAG)
 
 ![Screenshot](kant_rag/docs/images/langchain_banner.png)
 
