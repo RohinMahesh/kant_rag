@@ -1,5 +1,8 @@
 # Kant Retrieval Augmented Generation
 
+![Build Status](https://github.com/RohinMahesh/kant_rag/actions/workflows/ci.yml/badge.svg)
+
+
 ![Screenshot](kant_rag/docs/images/langchain_banner.png)
 
 # Motivation
