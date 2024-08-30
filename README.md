@@ -1,12 +1,14 @@
 # Kant Retrieval Augmented Generation (RAG)
 
+![Build Status](https://github.com/RohinMahesh/kant_rag/actions/workflows/ci.yml/badge.svg)
+
 ![Screenshot](kant_rag/docs/images/langchain_banner.png)
 
 # Motivation
 
 Historically, one of the more challenging use cases in the Information Retrieval (IR) domain has been around building solutions to support question answering. As organizations strive to become digital-first and undergo respective digital transformations, it is imperative to enable services within products to intelligently provide quick and accurate answers to key product related questions. This is crucial in providing a positive customer experience at every touchpoint a customer has with the product. 
 
-In addition to having an ample amount of high-quality labeled data, a key challenge in this area has been around efficient document retrieval methods to generate domain-specific context for downstream language models. Because of this, historically, leading models alone are insufficient to answer several domain-specific questions accurately and reliably. Modern day Large Language Models (LLMs) will require some sort of fine-tuning (i.e., PEFT, LoRA) to provide domain-specific answers.
+In addition to having an ample amount of high-quality labeled data, a key challenge in this area has been around efficient document retrieval methods to generate domain-specific context for downstream language models. Because of this, historically, leading models alone are insufficient to answer several domain-specific questions accurately and reliably. Modern day Large Language Models (LLMs) may require fine-tuning to provide domain-specific answers.
 
 The specific task we focus on in this repository is a request I have received from several of my former customers - creating a question answering solution that uses existing information around the service's offerings to answer a questions question.
 
