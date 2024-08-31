@@ -1,11 +1,3 @@
-import os
-import sys
-
-repo_path = os.path.abspath("/Users/rohinmahesh/Documents/GitHub/kant_rag")
-
-if repo_path not in sys.path:
-    sys.path.append(repo_path)
-
 import pytest
 
 from kant_rag.estimator.confidence_estimator import EstimateConfidence
