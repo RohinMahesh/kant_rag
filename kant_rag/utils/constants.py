@@ -27,3 +27,17 @@ TEMPLATE = """
 
     Question: {question}
 """
+PRINCIPLES = [
+    "harmful1",
+    "harmful2",
+    "harmful3",
+    "harmful4",
+    "harmful5",
+    "harmful6",
+    "harmful7",
+    "insensitive",
+    "offensive",
+    "derogatory",
+    "illegal",
+    "misogynistic",
+]

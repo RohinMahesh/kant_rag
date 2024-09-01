@@ -12,6 +12,9 @@ class ResponseValidator(BaseModel):
     source_documents: list[Any] = Field(
         description="List of sources from knowledge base"
     )
+    confidence: dict[str, float] = Field(
+        description="Confidence metrics using token log probabilities"
+    )
 
     @validator("result")
     def validate_string(cls, value):

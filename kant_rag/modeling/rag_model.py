@@ -4,6 +4,7 @@ from typing import Any, Dict, List, Union
 
 import tiktoken
 from kant_rag.base.objects import ResponseValidator
+from kant_rag.estimator.confidence_estimator import EstimateConfidence
 from kant_rag.utils.constants import (
     CHAIN_TYPE,
     CONTEXT_WINDOW,
@@ -11,6 +12,7 @@ from kant_rag.utils.constants import (
     K_VECTORS,
     OPENAI_KEY,
     OPENAI_MODEL,
+    PRINCIPLES,
     PROMPT_INPUT_VARIABLES,
     SEED,
     TEMPERATURE,
@@ -21,6 +23,9 @@ from kant_rag.utils.file_paths import INDEX_PATH
 from kant_rag.utils.helpers import count_tokens, load_embeddings
 from langchain import PromptTemplate
 from langchain.chains import RetrievalQA
+from langchain.chains.constitutional_ai.base import ConstitutionalChain
+from langchain.chains.llm import LLMChain
+from langchain.schema import HumanMessage
 from langchain.vectorstores import FAISS
 from langchain_core.output_parsers.pydantic import PydanticOutputParser
 from langchain_openai import ChatOpenAI
@@ -61,11 +66,41 @@ class KantRAG:
         :param text: response from OpenAI
         :returns dictionary containing response and sources
         """
+        # Clean result
         response = text["result"].strip()
+
+        # Extract source documents
         source_documents = [
             x.metadata["page"]["Source"] for x in text["source_documents"]
         ]
-        return {"response": response, "source": source_documents}
+        return {
+            "response": response,
+            "source": source_documents,
+            "confidence": text["confidence"],
+        }
+
+    def _rewrite_response(self) -> str:
+        """
+        Applies LangChain Constitutional Chain to rewrite responses that violates principles
+
+        :returns rewritten response
+        """
+        # Get principles to be applied
+        principles = ConstitutionalChain.get_principles(PRINCIPLES)
+
+        # Define constitutional chain
+        constitutional_chain = ConstitutionalChain.from_llm(
+            chain=LLMChain(llm=self.llm, prompt=self.prompt),
+            constitutional_principles=principles,
+            llm=self.llm,
+            verbose=True,
+        )
+
+        # Rewrite response for violations of principles
+        response = constitutional_chain.run(
+            question=self.question, context=self.context
+        )
+        return response
 
     def _create_chain(self) -> None:
         """
@@ -99,7 +134,7 @@ class KantRAG:
         self.context = context
 
         # Define LangChain prompt template
-        prompt = PromptTemplate(
+        self.prompt = PromptTemplate(
             template=TEMPLATE,
             input_variables=PROMPT_INPUT_VARIABLES,
             partial_variables={
@@ -108,7 +143,7 @@ class KantRAG:
         )
 
         # Initialize OpenAI client
-        llm = ChatOpenAI(
+        self.llm = ChatOpenAI(
             model=OPENAI_MODEL,
             temperature=self.temperature,
             seed=SEED,
@@ -125,13 +160,25 @@ class KantRAG:
 
         # Define Langchain RetrievalQA Chain
         self.qa_chain = RetrievalQA.from_chain_type(
-            llm=llm,
+            llm=self.llm,
             chain_type=CHAIN_TYPE,
             retriever=retriever,
-            chain_type_kwargs={"prompt": prompt},
+            chain_type_kwargs={"prompt": self.prompt},
             return_source_documents=True,
             verbose=False,
         )
+
+        # Get confidence estimation from LLM
+        formatted_context = TEMPLATE.format(
+            context=self.context, question=self.question
+        )
+        human_message = HumanMessage(content=formatted_context)
+        message = self.llm.invoke(input=[human_message])
+        logprobs = [
+            token_info["logprob"]
+            for token_info in message.response_metadata["logprobs"]["content"]
+        ]
+        self.confidence_metrics = EstimateConfidence(logprobs=logprobs).estimate()
 
     def run(self) -> Union[Dict[str, Union[str, List[str]]], RetrievalQA]:
         """
@@ -147,11 +194,15 @@ class KantRAG:
 
         # Get response from OpenAI
         text = self.qa_chain({"context": self.context, "query": self.question})
+        text.update({"confidence": self.confidence_metrics})
 
         # Validate response with PyDantic
         validated_response = ResponseValidator(**text)
 
         # Process response
         formatted_response = self._process_output(text)
+
+        # Validate no content violations
+        formatted_response["response"] = self._rewrite_response()
 
         return formatted_response
